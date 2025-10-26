@@ -4,4 +4,46 @@
   <artifactId>gymapp</artifactId>
   <packaging>war</packaging> 
   <version>0.0.1-SNAPSHOT</version>
+  <properties><resteasy.version>3.9.3.Final</resteasy.version></properties>
+  
+  <dependencies>
+  	
+  	<dependency>
+    	<groupId>org.jboss.resteasy</groupId>
+    	<artifactId>resteasy-jaxrs</artifactId>
+    	<version>${resteasy.version}</version>     
+    </dependency>
+    
+    <dependency>
+    	<groupId>org.jboss.resteasy</groupId>
+    	<artifactId>resteasy-servlet-initializer</artifactId>
+    	<version>${resteasy.version}</version>
+    </dependency> 
+       
+    <dependency>
+    	<groupId>org.jboss.resteasy</groupId>
+    	<artifactId>resteasy-jackson-provider</artifactId>
+    	<version>${resteasy.version}</version>
+    </dependency>
+    	
+    <dependency>
+	    <groupId>org.jboss.resteasy</groupId>
+	    <artifactId>resteasy-client</artifactId>
+	    <version>${resteasy.version}</version>
+    </dependency>
+    
+    <dependency>
+	    <groupId>mysql</groupId>
+	    <artifactId>mysql-connector-java</artifactId>
+	    <version>8.0.33</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.hibernate.orm</groupId>
+	    <artifactId>hibernate-core</artifactId>
+	    <version>7.1.4.Final</version>
+	</dependency>
+  	
+  </dependencies>
+  
 </project>
