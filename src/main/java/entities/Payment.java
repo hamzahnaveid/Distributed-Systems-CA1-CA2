@@ -4,6 +4,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+
+@NamedQueries({
+	@NamedQuery(name="Payment.findAll", query="select p from Payment p"), 
+	@NamedQuery(name = "Payment.findByMemberId", query = "select p from Payment p where p.memberId=:id")
+})
 
 @Entity
 public class Payment {
@@ -12,6 +20,9 @@ public class Payment {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int paymentId;
 	
+	@ManyToOne
+	private int memberId;
+	
 	private double amountPaid;
 	private String datePaid;
 	
@@ -19,7 +30,8 @@ public class Payment {
 		
 	}
 	
-	public Payment(double amountPaid, String datePaid) {
+	public Payment(int memberId, double amountPaid, String datePaid) {
+		this.memberId = memberId;
 		this.amountPaid = amountPaid;
 		this.datePaid = datePaid;
 	}
@@ -30,6 +42,14 @@ public class Payment {
 
 	public void setPaymentId(int paymentId) {
 		this.paymentId = paymentId;
+	}
+	
+	public int getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(int memberId) {
+		this.memberId = memberId;
 	}
 
 	public double getAmountPaid() {
