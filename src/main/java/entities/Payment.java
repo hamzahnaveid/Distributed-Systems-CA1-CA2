@@ -6,12 +6,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @NamedQueries({
 	@NamedQuery(name="Payment.findAll", query="select p from Payment p"),
 	@NamedQuery(name = "Payment.findById", query = "select p from Payment p where p.paymentId=:id")
 })
 
+@XmlRootElement
 @Entity
 public class Payment {
 	

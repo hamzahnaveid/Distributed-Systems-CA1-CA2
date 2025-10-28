@@ -3,16 +3,20 @@ package entities;
 import java.util.ArrayList; 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
-
-
-@NamedQuery(name="Gym.findAll", query="select g from Gym g") 
+@NamedQueries({
+	@NamedQuery(name="Gym.findAll", query="select g from Gym g") , 
+	@NamedQuery(name = "Gym.findById", query = "select g from Gym g where g.gymId=:id")
+})
 
 @Entity
 public class Gym {
@@ -21,7 +25,7 @@ public class Gym {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int gymId;
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<Member> members = new ArrayList<Member>();
 	
 	public Gym() {

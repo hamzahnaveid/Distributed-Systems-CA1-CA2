@@ -3,7 +3,9 @@ package entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -11,12 +13,14 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @NamedQueries({
 	@NamedQuery(name="Member.findAll", query="select m from Member m"), 
 	@NamedQuery(name = "Member.findById", query = "select m from Member m where m.memberId=:id")
 })
 
+@XmlRootElement
 @Entity
 public class Member {
 
@@ -32,7 +36,7 @@ public class Member {
 	@OneToOne
 	private Plan plan;
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<Payment> payments = new ArrayList<Payment>();
 	
 	public Member() {

@@ -8,6 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import entities.Gym;
+import entities.Member;
 
 
 public class GymDAO {
@@ -47,6 +48,20 @@ protected static EntityManagerFactory emf = Persistence.createEntityManagerFacto
 		em.getTransaction().commit();
 		em.close();
 		return gymsFromDb;
+	}
+	
+	public Gym findGymById(int id) {
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+		List<Gym> gymsWithId = new ArrayList<Gym>();
+		gymsWithId = em.createNamedQuery("Gym.findById").setParameter("id", id).getResultList();
+		em.getTransaction().commit();
+		em.close();
+		Gym gym = null;
+		for (Gym g : gymsWithId) {
+			gym = g;
+		}
+		return gym;	
 	}
 
 }

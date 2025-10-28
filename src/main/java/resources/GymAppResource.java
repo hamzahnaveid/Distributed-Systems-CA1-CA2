@@ -2,6 +2,7 @@ package resources;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -52,13 +53,23 @@ public class GymAppResource {
 	}
 	
 	@PUT
-	@Path("/updateMemberAddress/{memberId}")
+	@Path("/updateMemberPayments/{memberId}")
 	@Produces("application/json")
-	public Member updateMemberDetailsToDb(@PathParam("memberId") int memberId, @QueryParam("address") String address) {
+	public Member updateMemberPaymentsToDbJSON(
+			@PathParam("memberId") int memberId, 
+			@QueryParam("amountPaid") double amountPaid, 
+			@QueryParam("datePaid") String datePaid
+			) {
 		MemberDAO memberDao = new MemberDAO();
 		Member member = memberDao.findMemberById(memberId);
-		member.setAddress(address);
-		return memberDao.merge(member);
+		
+		Payment payment = new Payment(amountPaid, datePaid);
+		PaymentDAO paymentDao = new PaymentDAO();
+		paymentDao.persist(payment);
+		
+		member.addPayment(payment);
+		Member updatedMember = memberDao.merge(member);
+		return updatedMember;
 	}
 	
 	@DELETE
@@ -80,6 +91,36 @@ public class GymAppResource {
 		return paymentDao.getAllPayments();
 	}
 	
+	@POST
+	@Path("/createPayment")
+	@Produces("text/plain")
+	public String addPaymentToDb(@QueryParam("amountPaid") double amountPaid, @QueryParam("datePaid") String datePaid) {
+		Payment payment = new Payment(amountPaid, datePaid);
+		PaymentDAO paymentDao = new PaymentDAO();
+		paymentDao.persist(payment);
+		return "Payment added to DB: " + payment.getAmountPaid();
+	}
+	
+	@PUT
+	@Path("/updatePaymentAmount/{paymentId}")
+	@Produces("application/xml")
+	public Payment updatePaymentAmountToDbXML(@PathParam("paymentId") int paymentId, @QueryParam("amountPaid") double amountPaid) {
+		PaymentDAO paymentDao = new PaymentDAO();
+		Payment payment = paymentDao.findPaymentById(paymentId);
+		payment.setAmountPaid(amountPaid);
+		return paymentDao.merge(payment);
+	}
+	
+	@DELETE
+	@Path("/deletePayment/{paymentId}")
+	@Produces("text/plain")
+	public String deletePaymentFromDb(@PathParam("paymentId") int paymentId) {
+		PaymentDAO paymentDao = new PaymentDAO();
+		Payment payment = paymentDao.findPaymentById(paymentId);
+		paymentDao.remove(payment);
+		return "Payment removed from DB : " + payment.getAmountPaid() + " | " + payment.getDatePaid();
+	}
+	
 	// Endpoints for CRUD methods on Plan objects
 	@GET
 	@Path("/plans")
@@ -92,7 +133,7 @@ public class GymAppResource {
 	@POST
 	@Path("/createPlan")
 	@Produces("text/plain")
-	public String addPlanToDbJSON(@QueryParam("description") String description, @QueryParam("totalCost") double totalCost) {
+	public String addPlanToDb(@QueryParam("description") String description, @QueryParam("totalCost") double totalCost) {
 		Plan plan = new Plan(description, totalCost);
 		PlanDAO planDao = new PlanDAO();
 		planDao.persist(plan);
@@ -102,7 +143,7 @@ public class GymAppResource {
 	@PUT
 	@Path("/updatePlanDescription/{planId}")
 	@Produces("application/json")
-	public Plan updatePlanDescriptionToDb(@PathParam("planId") int planId, @QueryParam("description") String description) {
+	public Plan updatePlanDescriptionToDbJSON(@PathParam("planId") int planId, @QueryParam("description") String description) {
 		PlanDAO planDao = new PlanDAO();
 		Plan plan = planDao.findPlanById(planId);
 		plan.setDescription(description);
@@ -126,6 +167,37 @@ public class GymAppResource {
 	public List<Gym> listGymJSON() {
 		GymDAO gymDao = new GymDAO();
 		return gymDao.getAllGyms();
+	}
+	
+	@POST
+	@Path("/createGym")
+	@Produces("text/plain")
+	public String addGymToDb() {
+		Gym gym = new Gym();
+		GymDAO gymDao = new GymDAO();
+		gymDao.persist(gym);
+		return "Gym added to DB : ID = " + gym.getGymId();
+	}
+	
+	@PUT
+	@Path("/updateGymMembers/{gymId}")
+	@Consumes("application/json")
+	@Produces("application/json")
+	public Gym updateGymMembersToDbJSON(@PathParam("gymId") int gymId, Member member) {
+		GymDAO gymDao = new GymDAO();
+		Gym gym = gymDao.findGymById(gymId);
+		gym.addMember(member);
+		return gymDao.merge(gym);
+	}
+	
+	@DELETE
+	@Path("/deleteGym/{gymId}")
+	@Produces("text/plain")
+	public String deleteGymFromDb(@PathParam("gymId") int gymId) {
+		GymDAO gymDao = new GymDAO();
+		Gym gym = gymDao.findGymById(gymId);
+		gymDao.remove(gym);
+		return "Member removed from DB : " + gym.getGymId();
 	}
 
 }
