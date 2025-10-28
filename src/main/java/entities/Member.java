@@ -1,11 +1,16 @@
 package entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 @NamedQueries({
 	@NamedQuery(name="Member.findAll", query="select m from Member m"), 
@@ -24,15 +29,23 @@ public class Member {
 	private String address;
 	private String fitnessGoal;
 	
+	@OneToOne
+	private Plan plan;
+	
+	@OneToMany
+	private List<Payment> payments = new ArrayList<Payment>();
+	
 	public Member() {
 		
 	}
 	
-	public Member(String name, String phoneNumber, String address, String fitnessGoal) {
+	public Member(String name, String phoneNumber, String address, String fitnessGoal, Plan plan, List<Payment> payments) {
 		this.name = name;
 		this.phoneNumber = phoneNumber;
 		this.address = address;
 		this.fitnessGoal = fitnessGoal;
+		this.plan = plan;
+		this.payments = payments;
 	}
 
 	public int getMemberId() {
@@ -74,5 +87,25 @@ public class Member {
 	public void setFitnessGoal(String fitnessGoal) {
 		this.fitnessGoal = fitnessGoal;
 	}
+
+	public Plan getPlan() {
+		return plan;
+	}
+
+	public void setPlan(Plan plan) {
+		this.plan = plan;
+	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
+	}
 	
+	public void addPayment(Payment payment) {
+		this.payments.add(payment);
+	}
+
 }
