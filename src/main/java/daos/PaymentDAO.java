@@ -1,6 +1,6 @@
 package daos;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;  
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -49,14 +49,18 @@ protected static EntityManagerFactory emf = Persistence.createEntityManagerFacto
 		return paymentsFromDb;
 	}
 	
-	public List<Payment> findPaymentsByMemberId(int id) {
+	public Payment findPaymentById(int id) {
 		EntityManager em = emf.createEntityManager();
 		em.getTransaction().begin();
 		List<Payment> paymentsWithId = new ArrayList<Payment>();
-		paymentsWithId = em.createNamedQuery("Payment.findByMemberId").setParameter("id", id).getResultList();
+		paymentsWithId = em.createNamedQuery("Payment.findById").setParameter("id", id).getResultList();
 		em.getTransaction().commit();
 		em.close();
-		return paymentsWithId;
+		Payment payment = null;
+		for (Payment p : paymentsWithId) {
+			payment = p;
+		}
+		return payment;	
 	}
 
 }

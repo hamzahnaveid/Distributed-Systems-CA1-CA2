@@ -8,8 +8,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 @NamedQueries({
-	@NamedQuery(name="Plan.findAll", query="select p from Plan p"), 
-	@NamedQuery(name = "Plan.findByMemberId", query = "select p from Plan p where p.member_memberId=:id")
+	@NamedQuery(name="Plan.findAll", query="select p from Plan p"),
+	@NamedQuery(name = "Plan.findById", query = "select p from Plan p where p.planId=:id")
 })
 
 @Entity

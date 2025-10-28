@@ -1,6 +1,6 @@
 package daos;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;  
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -49,14 +49,18 @@ protected static EntityManagerFactory emf = Persistence.createEntityManagerFacto
 		return plansFromDb;
 	}
 	
-	public List<Plan> findPlansByMemberId(int id) {
+	public Plan findPlanById(int id) {
 		EntityManager em = emf.createEntityManager();
 		em.getTransaction().begin();
 		List<Plan> plansWithId = new ArrayList<Plan>();
-		plansWithId = em.createNamedQuery("Plan.findByMemberId").setParameter("id", id).getResultList();
+		plansWithId = em.createNamedQuery("Plan.findById").setParameter("id", id).getResultList();
 		em.getTransaction().commit();
 		em.close();
-		return plansWithId;
+		Plan plan = null;
+		for (Plan p : plansWithId) {
+			plan = p;
+		}
+		return plan;	
 	}
 
 }
