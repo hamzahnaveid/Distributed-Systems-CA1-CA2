@@ -132,11 +132,19 @@ public class GymAppResource {
 	
 	@POST
 	@Path("/createPlan")
+	@Consumes("application/json")
 	@Produces("text/plain")
-	public String addPlanToDb(@QueryParam("description") String description, @QueryParam("totalCost") double totalCost) {
+	public String addPlanToDb(
+			@QueryParam("description") String description,
+			@QueryParam("totalCost") double totalCost,
+			@QueryParam("memberId") int memberId
+			) {
 		Plan plan = new Plan(description, totalCost);
-		PlanDAO planDao = new PlanDAO();
-		planDao.persist(plan);
+		MemberDAO memberDao = new MemberDAO();
+		Member member = memberDao.findMemberById(memberId);
+		member.setPlan(plan);
+		memberDao.merge(member);
+		
 		return "Plan added to DB : " + plan.getDescription();
 	}
 	

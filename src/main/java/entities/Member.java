@@ -33,7 +33,7 @@ public class Member {
 	private String address;
 	private String fitnessGoal;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private Plan plan;
 	
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
