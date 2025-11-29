@@ -1,2 +1,5 @@
-/Users/hamzahnaveid/Downloads/emissions-app/src/main/java/org/distributedsystems/GreetingResource.java
-/Users/hamzahnaveid/Downloads/emissions-app/src/main/java/org/distributedsystems/MyEntity.java
+/Users/hamzahnaveid/Downloads/emissions-app/src/main/java/org/distributedsystems/daos/EmissionDAO.java
+/Users/hamzahnaveid/Downloads/emissions-app/src/main/java/org/distributedsystems/daos/UserDAO.java
+/Users/hamzahnaveid/Downloads/emissions-app/src/main/java/org/distributedsystems/entities/Emission.java
+/Users/hamzahnaveid/Downloads/emissions-app/src/main/java/org/distributedsystems/entities/User.java
+/Users/hamzahnaveid/Downloads/emissions-app/src/main/java/org/distributedsystems/resources/GreetingResource.java
