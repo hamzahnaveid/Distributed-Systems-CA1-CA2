@@ -2,4 +2,4 @@
 /Users/hamzahnaveid/Downloads/emissions-app/src/main/java/org/distributedsystems/daos/UserDAO.java
 /Users/hamzahnaveid/Downloads/emissions-app/src/main/java/org/distributedsystems/entities/Emission.java
 /Users/hamzahnaveid/Downloads/emissions-app/src/main/java/org/distributedsystems/entities/User.java
-/Users/hamzahnaveid/Downloads/emissions-app/src/main/java/org/distributedsystems/resources/GreetingResource.java
+/Users/hamzahnaveid/Downloads/emissions-app/src/main/java/org/distributedsystems/resources/EmissionsAppResource.java
