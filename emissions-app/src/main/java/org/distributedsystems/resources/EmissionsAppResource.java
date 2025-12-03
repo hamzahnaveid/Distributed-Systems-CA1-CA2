@@ -1,5 +1,6 @@
 package org.distributedsystems.resources;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -15,6 +16,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -66,7 +72,8 @@ public class EmissionsAppResource {
     
     @GET
     @Path("/parseXml")
-    public void parseXml() throws ParserConfigurationException, SAXException, IOException {
+    @Produces(MediaType.TEXT_PLAIN)
+    public String parseXml() throws ParserConfigurationException, SAXException, IOException {
     	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     	DocumentBuilder builder = factory.newDocumentBuilder();
     	Document document = builder.parse("/Users/hamzahnaveid/Documents/MMR_IRArticle23T1_IE_2016v2.xml");
@@ -94,6 +101,33 @@ public class EmissionsAppResource {
     			
     		}
     	}
+    	
+    	return "XML file parsed to DB";
+    }
+    
+    @GET
+    @Path("/parseJson")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String parseJson() throws IOException {
+    	String result = "";
+    	
+    	File file = new File("/Users/hamzahnaveid/Downloads/GreenhouseGasEmissions2025.json");
+    	ObjectMapper mapper = new ObjectMapper();
+    	JsonNode node = mapper.readTree(file);
+    	JsonNode list = node.get("Emissions");
+    	JsonParser parser = list.traverse();
+    	
+    	for (JsonNode obj : list) {
+    		String category = obj.get("Category").asText();
+    		String gasUnits = obj.get("Gas Units").asText();
+    		double value = obj.get("Value").asDouble(); 
+    		
+    		Emission emission = new Emission(category, null, 2023, "WEM", gasUnits, value);
+    		emissionDao.persist(emission);
+    	}
+    	
+    	return "JSON file parsed to DB";
+
     }
     
     @GET
