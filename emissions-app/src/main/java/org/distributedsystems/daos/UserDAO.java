@@ -3,61 +3,52 @@ package org.distributedsystems.daos;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import jakarta.transaction.Transactional;
 
 import org.distributedsystems.entities.User;
 
+@ApplicationScoped
 public class UserDAO {
 	
-	protected static EntityManagerFactory emf = Persistence.createEntityManagerFactory("jpaPU");
+	@Inject
+	EntityManager em;
 	
+	
+	@Transactional
 	public void persist(User user) {
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
 		em.persist(user);
-		em.getTransaction().commit();
-		em.close();
 	}
 	
+	@Transactional
 	public void remove(User user) {
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
 		em.remove(em.merge(user));
-		em.getTransaction().commit();
-		em.close();
 	}
 	
+	@Transactional
 	public User merge(User user) {
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
 		User updatedUser = em.merge(user);
-		em.getTransaction().commit();
-		em.close();
 		return updatedUser;
 	}
 	
+	@Transactional
 	public List<User> getAllUsers() {
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
 		List<User> usersFromDb = new ArrayList<User>();
 		usersFromDb = em.createNamedQuery("User.findAll").getResultList();
-		em.getTransaction().commit();
-		em.close();
 		return usersFromDb;
 	}
 	
-	public User findUserById(int id) {
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
-		List<User> usersWithId = new ArrayList<User>();
-		usersWithId = em.createNamedQuery("User.findById").setParameter("id", id).getResultList();
-		em.getTransaction().commit();
-		em.close();
+	@Transactional
+	public User findUserByEmail(String email) {
+		List<User> userWithEmail = new ArrayList<User>();
+		userWithEmail = em.createNamedQuery("User.findByEmail").setParameter("email", email).getResultList();
 		User user = null;
-		for (User m : usersWithId) {
-			user = m;
+		for (User u : userWithEmail) {
+			user = u;
 		}
 		return user;	
 	}

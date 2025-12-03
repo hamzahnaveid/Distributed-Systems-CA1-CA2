@@ -94,5 +94,15 @@ public class Emission {
 	public void setValue(double value) {
 		this.value = value;
 	}
+	
+	public String toString() {
+		return "ID: " + this.id + 
+				" || Category: " + this.category + 
+				" || Description: " + this.description + 
+				" || Year: " + this.year +
+				" || Scenario " + this.scenario +
+				" || Gas Units " + this.gasUnits +
+				" || Value " + this.value + "\n";
+	}
 
 }

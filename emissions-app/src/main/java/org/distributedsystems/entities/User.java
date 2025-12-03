@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 
 @NamedQueries({
 	@NamedQuery(name="User.findAll", query="select u from User u"), 
-	@NamedQuery(name = "User.findById", query = "select u from User u where u.id=:id")
+	@NamedQuery(name = "User.findByEmail", query = "select u from User u where u.email=:email")
 })
 
 @Entity
