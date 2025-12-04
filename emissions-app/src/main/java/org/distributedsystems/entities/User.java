@@ -57,7 +57,7 @@ public class User {
 	
 	public String toString() {
 		return "ID: " + this.id +
-				"|| Email: " + this.email + "\n";
+				" || Email: " + this.email + "\n";
 	}
 	
 }

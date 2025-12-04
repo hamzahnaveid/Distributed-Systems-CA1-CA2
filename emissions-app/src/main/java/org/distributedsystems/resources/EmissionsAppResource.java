@@ -12,6 +12,9 @@ import org.distributedsystems.daos.EmissionDAO;
 import org.distributedsystems.daos.UserDAO;
 import org.distributedsystems.entities.Emission;
 import org.distributedsystems.entities.User;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -95,34 +98,37 @@ public class EmissionsAppResource {
     				double value = Double.parseDouble(children.item(j+8).getTextContent());
     				String description = getDescription(category);
     				
-    				Emission emission = new Emission(category, null, year, scenario, gasUnits, value);
+    				Emission emission = new Emission(category, description, year, scenario, gasUnits, value);
     				emissionDao.persist(emission);
     			}
     			
     		}
     	}
     	
-    	return "XML file parsed to DB";
+    	return "XML file parsed to DBa";
     }
     
     @GET
     @Path("/parseJson")
     @Produces(MediaType.TEXT_PLAIN)
     public String parseJson() throws IOException {
-    	String result = "";
     	
     	File file = new File("/Users/hamzahnaveid/Downloads/GreenhouseGasEmissions2025.json");
     	ObjectMapper mapper = new ObjectMapper();
     	JsonNode node = mapper.readTree(file);
     	JsonNode list = node.get("Emissions");
-    	JsonParser parser = list.traverse();
     	
     	for (JsonNode obj : list) {
     		String category = obj.get("Category").asText();
     		String gasUnits = obj.get("Gas Units").asText();
-    		double value = obj.get("Value").asDouble(); 
+    		double value = obj.get("Value").asDouble();
+    		String description = getDescription(category);
     		
-    		Emission emission = new Emission(category, null, 2023, "WEM", gasUnits, value);
+    		if (value < 0) {
+    			continue;
+    		}
+    		
+    		Emission emission = new Emission(category, description, 2023, "WEM", gasUnits, value);
     		emissionDao.persist(emission);
     	}
     	
@@ -155,9 +161,78 @@ public class EmissionsAppResource {
 		return result;
 	}
     
-    public String getDescription(String category) {
+    @POST
+   	@Path("/addEmission")
+   	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.TEXT_PLAIN)
+   	public String addEmission(@FormParam("category") String category, @FormParam("year") String year, @FormParam("scenario") String scenario, @FormParam("units") String gasUnits, @FormParam("value") String value) throws IOException {
+    	String description = getDescription(category);
+       	Emission emission = new Emission(category, description, Integer.parseInt(year), scenario, gasUnits, Double.parseDouble(value));
+       	emissionDao.persist(emission);
+   		return "Emission added to DB";
+   	}
+    
+    @POST
+   	@Path("/deleteByCategory")
+   	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.TEXT_PLAIN)
+   	public String deleteByCategory(@FormParam("category") String category) {
+       	List<Emission> emissionsByCategory = emissionDao.findEmissionsByCategory(category);
+       	for (Emission e : emissionsByCategory) {
+       		emissionDao.remove(e);
+       	}
+   		return "All " + category + " emissions removed from DB";
+   	}
+    
+    @GET
+    @Path("/viewAllUsers")
+	@Produces(MediaType.TEXT_PLAIN)
+    public String viewAllUsers() {
     	String result = "";
+    	List<User> users = userDao.getAllUsers();
+    	for (User u : users) {
+    		result += u.toString();
+    	}
     	return result;
     }
     
+    @POST
+   	@Path("/deleteByEmail")
+   	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.TEXT_PLAIN)
+   	public String deleteByEmail(@FormParam("email") String email) {
+       	User user = userDao.findUserByEmail(email);
+       	userDao.remove(user);
+   		return "User " + user.getId() + " removed from DB";
+   	}
+    
+    @POST
+   	@Path("/updateByEmail")
+   	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.TEXT_PLAIN)
+   	public String updateByEmail(@FormParam("email") String email, @FormParam("password") String password) {
+       	User user = userDao.findUserByEmail(email);
+       	user.setPassword(password);
+       	userDao.merge(user);
+   		return "User " + user.getId() + " password updated";
+   	}
+    
+    
+    @GET
+    @Path("/getDescription")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getDescription(@QueryParam("category") String category) throws IOException {
+    	String result = "";
+    	String url = "https://www.ipcc-nggip.iges.or.jp/EFDB/find_ef.php?ipcc_code=" + category;
+    	
+    	org.jsoup.nodes.Document document = Jsoup.connect(url).get();
+		Elements nodes = document.select(".listCell");
+		if (!nodes.select("ul > li").isEmpty()) {
+			result += nodes.select("ul > li").get(1).text();
+		}
+
+    			
+    	return result;
+    }
+   
 }

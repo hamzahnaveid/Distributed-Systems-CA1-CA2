@@ -6,6 +6,19 @@
 
 <body>
 	<h3> Home </h3>
+	
+	<h4>Parse</h4>
+	<div>
+		<form action="/app/parseXml" method="get">
+			<button type="submit">Parse XML to DB</button>
+	    </form>
+	    
+	    <form action="/app/parseJson" method="get">
+	    	<button type="submit">Parse JSON to DB</button>
+	    </form>
+    </div>
+	
+	<h4>View Emissions</h4>
     <form action="/app/viewAllEmissions" method="get">
         <div>
             <button type="submit">View all emissions</button>
@@ -21,7 +34,68 @@
     </form>
     
     <h4> Add Emission </h4>
+    <form action="/app/addEmission" method="post">
+        <div>
+        	<label for="category"><b>Category</b></label>
+            <input type="text" placeholder="Enter category" name="category" required>
+            
+            <label for="year"><b>Year</b></label>
+            <input type="text" placeholder="Enter year" name="year" required>
+            
+            <label for="scenario"><b>Scenario</b></label>
+            <input type="text" placeholder="Enter scenario" name="scenario" required>
+            
+            <label for="units"><b>Gas Units</b></label>
+            <input type="text" placeholder="Enter units" name="units" required>
+            
+            <label for="value"><b>Value</b></label>
+            <input type="text" placeholder="Enter value" name="value" required>
+            
+            <button type="submit">Add to DB</button>
+        </div>
+    </form>
     
+    <h4> Delete Emissions by Category </h4>
+     <form action="/app/deleteByCategory" method="post">
+        <div>
+        	<label for="category"><b>Category</b></label>
+            <input type="text" placeholder="Enter category" name="category" required>
+            
+            <button type="submit">Delete from category</button>
+        </div>
+    </form>
+    
+    <h4> View Users </h4>
+     <form action="/app/viewAllUsers" method="get">
+        <div>
+            <button type="submit">View all users</button>
+        </div>
+    </form>
+    
+    <h4> Delete User by Email </h4>
+     <form action="/app/deleteByEmail" method="post">
+        <div>
+        	<label for="email"><b>Email</b></label>
+            <input type="text" placeholder="Enter email" name="email" required>
+            
+            <button type="submit">Delete user</button>
+        </div>
+    </form>
+    
+    <h4> Update User by Email </h4>
+     <form action="/app/updateByEmail" method="post">
+        <div>
+        	<label for="email"><b>Email</b></label>
+            <input type="text" placeholder="Enter email" name="email" required>
+            
+            <label for="password"><b>Password</b></label>
+            <input type="text" placeholder="Enter new password" name="password" required>
+            
+            <button type="submit">Update user</button>
+        </div>
+    </form>
+    
+    <a href="/login.html">Log out</a>
     
 </body>
 
