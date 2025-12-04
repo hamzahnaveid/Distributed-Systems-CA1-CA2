@@ -184,6 +184,19 @@ public class EmissionsAppResource {
    		return "All " + category + " emissions removed from DB";
    	}
     
+    @POST
+   	@Path("/updateByCategory")
+   	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.TEXT_PLAIN)
+   	public String updateByCategory(@FormParam("category") String category, @FormParam("description") String description) {
+    	List<Emission> emissionsByCategory = emissionDao.findEmissionsByCategory(category);
+    	for (Emission e : emissionsByCategory) {
+       		e.setDescription(description);
+       		emissionDao.merge(e);
+       	}
+    	return "All " + category + " emissions updated with description " + "\'" + description + "\'";
+   	}
+    
     @GET
     @Path("/viewAllUsers")
 	@Produces(MediaType.TEXT_PLAIN)

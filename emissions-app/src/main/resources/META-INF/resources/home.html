@@ -65,6 +65,19 @@
         </div>
     </form>
     
+    <h4> Update Emissions by Category </h4>
+     <form action="/app/updateByCategory" method="post">
+        <div>
+        	<label for="category"><b>Category</b></label>
+            <input type="text" placeholder="Enter category" name="category" required>
+            
+            <label for="description"><b>Description</b></label>
+            <input type="text" placeholder="Enter description" name="description" required>
+            
+            <button type="submit">Update description</button>
+        </div>
+    </form>
+    
     <h4> View Users </h4>
      <form action="/app/viewAllUsers" method="get">
         <div>
