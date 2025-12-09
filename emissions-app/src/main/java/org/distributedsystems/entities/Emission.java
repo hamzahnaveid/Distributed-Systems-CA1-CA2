@@ -28,21 +28,21 @@ public class Emission {
 	private String gasUnits;
 	private double value;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.MERGE)
 	User approvingUser;
 	
 	public Emission() {
 		
 	}
 	
-	public Emission(String category, String description, int year, String scenario, String gasUnits, double value) {
+	public Emission(String category, String description, int year, String scenario, String gasUnits, double value, User approvingUser) {
 		this.category = category;
 		this.description = description;
 		this.year = year;
 		this.scenario = scenario;
 		this.gasUnits = gasUnits;
 		this.value = value;
-		//this.approvingUser = approvingUser;
+		this.approvingUser = approvingUser;
 	}
 
 	public int getId() {
@@ -114,9 +114,10 @@ public class Emission {
 				" || Category: " + this.category + 
 				" || Description: " + this.description + 
 				" || Year: " + this.year +
-				" || Scenario " + this.scenario +
-				" || Gas Units " + this.gasUnits +
-				" || Value " + this.value + "\n";
+				" || Scenario: " + this.scenario +
+				" || Gas Units: " + this.gasUnits +
+				" || Value: " + this.value + 
+				" || Approving User: " + this.getApprovingUser().getEmail() + "\n";
 	}
 
 }

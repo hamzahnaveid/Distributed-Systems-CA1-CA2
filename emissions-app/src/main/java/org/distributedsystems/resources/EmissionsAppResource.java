@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.CookieParam;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -37,6 +38,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.Response;
 
 @Path("/app")
@@ -44,6 +46,9 @@ import jakarta.ws.rs.core.Response;
 public class EmissionsAppResource {
 	
 	HashMap<String, String> descriptions = new HashMap<String, String>();
+	
+	@Inject
+	SessionStore sessionStore;
 	@Inject
 	EmissionDAO emissionDao;
 	@Inject
@@ -63,7 +68,14 @@ public class EmissionsAppResource {
 			return Response.status(401).entity("Invalid password. Please try again.").build();
 		}
 		
-		return Response.status(Response.Status.FOUND).header("Location", "/home.html").build();
+		String token = java.util.UUID.randomUUID().toString();
+		sessionStore.addSession(token, user);
+		
+		return Response
+				.status(Response.Status.FOUND)
+				.header("Location", "/home.html")
+				.cookie(new NewCookie("SessionID", token))
+				.build();
 	}
 	
 	@POST
@@ -72,13 +84,35 @@ public class EmissionsAppResource {
 	public Response register(@FormParam("email") String email, @FormParam("password") String password) {	
 		User user = new User(email, password);
 		userDao.persist(user);
-		return Response.status(Response.Status.FOUND).header("Location", "/home.html").build();
+		
+		String token = java.util.UUID.randomUUID().toString();
+		sessionStore.addSession(token, user);
+		
+		return Response
+				.status(Response.Status.FOUND)
+				.header("Location", "/home.html")
+				.cookie(new NewCookie("SessionID", token))
+				.build();
+	}
+	
+	@GET
+	@Path("/logout")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response logout(@CookieParam("SessionID") String token) {
+		sessionStore.remove(token);
+		return Response
+				.status(Response.Status.FOUND)
+				.header("Location", "/login.html")
+				.cookie(new NewCookie("SessionID", ""))
+				.build();
 	}
     
     @GET
     @Path("/parseXml")
     @Produces(MediaType.TEXT_PLAIN)
-    public String parseXml() throws ParserConfigurationException, SAXException, IOException {
+    public String parseXml(@CookieParam("SessionID") String token) throws ParserConfigurationException, SAXException, IOException {
+    	User approvingUser = sessionStore.getUser(token);
+    	
     	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     	DocumentBuilder builder = factory.newDocumentBuilder();
     	Document document = builder.parse("/Users/hamzahnaveid/Documents/MMR_IRArticle23T1_IE_2016v2.xml");
@@ -100,7 +134,7 @@ public class EmissionsAppResource {
     				double value = Double.parseDouble(children.item(j+8).getTextContent());
     				String description = getDescription(category);
     				
-    				Emission emission = new Emission(category, description, year, scenario, gasUnits, value);
+    				Emission emission = new Emission(category, description, year, scenario, gasUnits, value, approvingUser);
     				emissionDao.persist(emission);
     			}
     			
@@ -113,7 +147,8 @@ public class EmissionsAppResource {
     @GET
     @Path("/parseJson")
     @Produces(MediaType.TEXT_PLAIN)
-    public String parseJson() throws IOException {
+    public String parseJson(@CookieParam("SessionID") String token) throws IOException {
+    	User approvingUser = sessionStore.getUser(token);
     	
     	File file = new File("/Users/hamzahnaveid/Downloads/GreenhouseGasEmissions2025.json");
     	ObjectMapper mapper = new ObjectMapper();
@@ -130,7 +165,7 @@ public class EmissionsAppResource {
     			continue;
     		}
     		
-    		Emission emission = new Emission(category, description, 2023, "WEM", gasUnits, value);
+    		Emission emission = new Emission(category, description, 2023, "WEM", gasUnits, value, approvingUser);
     		emissionDao.persist(emission);
     	}
     	
@@ -167,9 +202,11 @@ public class EmissionsAppResource {
    	@Path("/addEmission")
    	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_PLAIN)
-   	public String addEmission(@FormParam("category") String category, @FormParam("year") String year, @FormParam("scenario") String scenario, @FormParam("units") String gasUnits, @FormParam("value") String value) throws IOException {
+   	public String addEmission(@CookieParam("SessionID") String token, @FormParam("category") String category, @FormParam("year") String year, @FormParam("scenario") String scenario, @FormParam("units") String gasUnits, @FormParam("value") String value) throws IOException {
+    	User approvingUser = sessionStore.getUser(token);
+    	
     	String description = getDescription(category);
-       	Emission emission = new Emission(category, description, Integer.parseInt(year), scenario, gasUnits, Double.parseDouble(value));
+       	Emission emission = new Emission(category, description, Integer.parseInt(year), scenario, gasUnits, Double.parseDouble(value), approvingUser);
        	emissionDao.persist(emission);
    		return "Emission added to DB";
    	}
@@ -183,7 +220,7 @@ public class EmissionsAppResource {
        	for (Emission e : emissionsByCategory) {
        		emissionDao.remove(e);
        	}
-   		return "All " + category + " emissions removed from DB";
+   		return "All " + category + " emissions removed from DB.";
    	}
     
     @POST
@@ -218,7 +255,7 @@ public class EmissionsAppResource {
    	public String deleteByEmail(@FormParam("email") String email) {
        	User user = userDao.findUserByEmail(email);
        	userDao.remove(user);
-   		return "User " + user.getId() + " removed from DB";
+   		return "User " + user.getId() + " removed from DB.";
    	}
     
     @POST
