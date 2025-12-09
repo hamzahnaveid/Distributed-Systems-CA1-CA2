@@ -5,9 +5,9 @@
 </head>
 
 <body>
-	<h3> Home </h3>
+	<h1> Home </h1>
 	
-	<h4>Parse</h4>
+	<h2>Parse</h2>
 	<div>
 		<form action="/app/parseXml" method="get">
 			<button type="submit">Parse XML to DB</button>
@@ -18,7 +18,7 @@
 	    </form>
     </div>
 	
-	<h4>View Emissions</h4>
+	<h2>View Emissions</h2>
     <form action="/app/viewAllEmissions" method="get">
         <div>
             <button type="submit">View all emissions</button>
@@ -33,7 +33,7 @@
         </div>
     </form>
     
-    <h4> Add Emission </h4>
+    <h2> Add Emission </h2>
     <form action="/app/addEmission" method="post">
         <div>
         	<label for="category"><b>Category</b></label>
@@ -55,7 +55,7 @@
         </div>
     </form>
     
-    <h4> Delete Emissions by Category </h4>
+    <h2> Delete Emissions by Category </h2>
      <form action="/app/deleteByCategory" method="post">
         <div>
         	<label for="category"><b>Category</b></label>
@@ -65,7 +65,7 @@
         </div>
     </form>
     
-    <h4> Update Emissions by Category </h4>
+    <h2> Update Emissions by Category </h2>
      <form action="/app/updateByCategory" method="post">
         <div>
         	<label for="category"><b>Category</b></label>
@@ -78,14 +78,14 @@
         </div>
     </form>
     
-    <h4> View Users </h4>
+    <h2> View Users </h2>
      <form action="/app/viewAllUsers" method="get">
         <div>
             <button type="submit">View all users</button>
         </div>
     </form>
     
-    <h4> Delete User by Email </h4>
+    <h2> Delete User by Email </h2>
      <form action="/app/deleteByEmail" method="post">
         <div>
         	<label for="email"><b>Email</b></label>
@@ -95,7 +95,7 @@
         </div>
     </form>
     
-    <h4> Update User by Email </h4>
+    <h2> Update User by Email </h2>
      <form action="/app/updateByEmail" method="post">
         <div>
         	<label for="email"><b>Email</b></label>
@@ -108,7 +108,10 @@
         </div>
     </form>
     
-    <a href="/login.html">Log out</a>
+    
+    <form action="/app/logout" method="get">
+		<button type="submit">Logout</button>
+	</form>
     
 </body>
 

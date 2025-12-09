@@ -1,9 +1,11 @@
 package org.distributedsystems.entities;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 
@@ -26,6 +28,9 @@ public class Emission {
 	private String gasUnits;
 	private double value;
 	
+	@ManyToOne(cascade = CascadeType.ALL)
+	User approvingUser;
+	
 	public Emission() {
 		
 	}
@@ -37,6 +42,7 @@ public class Emission {
 		this.scenario = scenario;
 		this.gasUnits = gasUnits;
 		this.value = value;
+		//this.approvingUser = approvingUser;
 	}
 
 	public int getId() {
@@ -95,6 +101,14 @@ public class Emission {
 		this.value = value;
 	}
 	
+	public User getApprovingUser() {
+		return approvingUser;
+	}
+
+	public void setApprovingUser(User approvingUser) {
+		this.approvingUser = approvingUser;
+	}
+
 	public String toString() {
 		return "ID: " + this.id + 
 				" || Category: " + this.category + 

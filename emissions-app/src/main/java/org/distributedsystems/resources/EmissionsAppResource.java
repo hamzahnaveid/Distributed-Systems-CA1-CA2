@@ -2,6 +2,7 @@ package org.distributedsystems.resources;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -42,6 +43,7 @@ import jakarta.ws.rs.core.Response;
 @ApplicationScoped
 public class EmissionsAppResource {
 	
+	HashMap<String, String> descriptions = new HashMap<String, String>();
 	@Inject
 	EmissionDAO emissionDao;
 	@Inject
@@ -105,7 +107,7 @@ public class EmissionsAppResource {
     		}
     	}
     	
-    	return "XML file parsed to DBa";
+    	return "XML file parsed to DB";
     }
     
     @GET
@@ -235,13 +237,21 @@ public class EmissionsAppResource {
     @Path("/getDescription")
     @Produces(MediaType.TEXT_PLAIN)
     public String getDescription(@QueryParam("category") String category) throws IOException {
+    	
+    	if (descriptions.get(category) != null) {
+    		return descriptions.get(category);
+    	}
+    	
+    	descriptions.put(category, "");
+    	
     	String result = "";
     	String url = "https://www.ipcc-nggip.iges.or.jp/EFDB/find_ef.php?ipcc_code=" + category;
     	
     	org.jsoup.nodes.Document document = Jsoup.connect(url).get();
 		Elements nodes = document.select(".listCell");
 		if (!nodes.select("ul > li").isEmpty()) {
-			result += nodes.select("ul > li").get(1).text();
+			result = nodes.select("ul > li").get(1).text();
+			descriptions.put(category, result);
 		}
 
     			
